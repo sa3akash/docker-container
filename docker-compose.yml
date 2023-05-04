@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+
+  node-app:
+    restart: always
+    env_file:
+      - ./.env
+    depends_on:
+      - mongo
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "4000:3000"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+    depends_on:
+      - node-app
+    restart: always
+
+  redis:
+    image: redis
+    restart: always
+
+
+volumes:
+  mongo-data:

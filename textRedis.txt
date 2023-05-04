@@ -1,0 +1,30 @@
+// session and redis
+const session = require("express-session");
+const RedisStore = require("connect-redis")(session);
+const redis = require("redis");
+
+// enable this if you run behind a proxy (e.g. nginx)
+//app.set('trust proxy', 1);
+
+let redisClient = redis.createClient({url: "redis://redis:6379"});
+
+
+
+// session and redis
+redisClient.connect().then(async (res) => {
+    console.log("redis connected");
+    app.use(session({
+        store: new RedisStore({ client: redisClient }),
+        secret: REDIS_SEC,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+          httpOnly: true,
+          maxAge: 30000,
+          secure: false,
+        },
+      }));
+  }).catch((err) => {
+    console.log("err happened" + err);
+  });
+

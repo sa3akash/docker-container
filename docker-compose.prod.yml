@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+  node-app:
+    deploy:
+      replicas: 8
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 2
+        delay: 10s
+    build: 
+      context: .
+      args:
+        - NODE_ENV:production
+    environment:
+      - NODE_ENV=production
+    command: npm run start
